@@ -1,0 +1,26 @@
+{
+  "version": "2.0",
+  "extensions": {
+	"http": {
+	  "routePrefix": "api/v1"
+	},
+	"logging": {
+	  "applicationInsights": {
+		"samplingExcludedTypes": "Request",
+		"samplingSettings": {
+		  "isEnabled": true
+		}
+	  }
+	},
+	"durableTask": {
+	  "hubName": "BugrTaskHub",
+	  "tracing": {
+		"traceInputsAndOutputs": true,
+		"traceReplayEvents": true
+	  },
+	  "maxConcurrentActivityFunctions": 4,
+	  "maxConcurrentOrchestratorFunctions": 4,
+	  "useGracefulShutdown": true
+	}
+  }
+}

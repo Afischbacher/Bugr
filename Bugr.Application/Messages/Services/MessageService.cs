@@ -12,7 +12,7 @@ namespace Bugr.Application.Messages.Services
 {
 	public interface IMessageService
 	{
-		Task<string> GetRandomReminderMessage();
+		Task<string> GetRandomReminderMessageAsync();
 	}
 
 	public class MessageService : IMessageService
@@ -27,9 +27,9 @@ namespace Bugr.Application.Messages.Services
 			_cloudTableStorageService = cloudTableStorageService;
 		}
 
-		public async Task<string> GetRandomReminderMessage()
+		public async Task<string> GetRandomReminderMessageAsync()
 		{
-			var reminderMessages = await _cloudTableStorageService.QueryTable("bugrReminderMessages", new TableQuery<BugrReminderMessage>());
+			var reminderMessages = await _cloudTableStorageService.QueryTableAsync("bugrReminderMessages", new TableQuery<BugrReminderMessage>());
 
 			return reminderMessages.GetRandomValue().RowKey;
 		}

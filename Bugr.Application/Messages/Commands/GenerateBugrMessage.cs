@@ -39,9 +39,11 @@ namespace Bugr.Application.Messages.Commands
 		{
 			var toNumber = await _secretClient.GetSecretValueAsync(_secretKeySettings.RecipientPhoneNumber);
 			if (toNumber == null)
+			{
 				throw new RequestFailedException("Unable to get to destination phone number");
+			}
 
-			var message = await _messageService.GetRandomReminderMessage();
+			var message = await _messageService.GetRandomReminderMessageAsync();
 			return new BugrMessageViewModel
 			{
 				PhoneNumber = toNumber,

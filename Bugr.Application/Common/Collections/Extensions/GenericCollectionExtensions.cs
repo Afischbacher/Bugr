@@ -7,11 +7,12 @@ namespace Bugr.Application.Common.Collections.Extensions
 {
 	public static class GenericCollectionExtensions
 	{ 
+		/// <summary>
+		/// Selects a returns a random value from a generic collection
+		/// </summary>
 		public static T GetRandomValue<T>(this IEnumerable<T> collection)
 		{
-			var randomIndex = new Random().Next(minValue: 0, maxValue: collection.Count() - 1);
-
-			return collection.ElementAt(randomIndex);
+			return collection.ElementAt(new Random().Next(minValue: 0, maxValue: collection.Count() - 1));
 		}
 	}
 }

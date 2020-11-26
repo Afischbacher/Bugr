@@ -23,7 +23,8 @@ namespace Bugr
 			// Service Dependency Injection Configuration
 			builder.Services.AddMediatR(Assembly.GetAssembly(typeof(IMediatrRegistration)));
 			builder.Services.AddSingleton(new SecretClient(new Uri(AzureKeyVaultEndPoint), new DefaultAzureCredential()));
-
+			
+			// Services and Settings
 			builder.Services.AddTransient<ISecretKeySettings, SecretKeySettings>();
 			builder.Services.AddTransient<ITwilioAuthenticationWebHookService, TwilioAuthenticationWebHookService>();
 			builder.Services.AddTransient<IMessageService, MessageService>();

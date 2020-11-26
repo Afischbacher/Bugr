@@ -9,6 +9,7 @@ using Azure;
 using Bugr.Application.Common.Secrets.Extension;
 using Bugr.Application.Messages.Settings;
 using Bugr.Application.Common.Exceptions;
+using System;
 
 namespace Bugr.Application.Messages.Commands
 {
@@ -43,21 +44,16 @@ namespace Bugr.Application.Messages.Commands
 			var fromPhoneNumber = await _client.GetSecretValueAsync(_secretKeySettings.FromPhoneNumber);
 
 			if (fromPhoneNumber == null)
+			{
 				throw new RequestFailedException("Unable to get to source phone number");
+			}
 
-			try
-			{
-				await MessageResource.CreateAsync
-				(
-					from: fromPhoneNumber,
-					to: toPhoneNumber,
-					body: messageBody
-				);
-			}
-			catch 
-			{
-				throw new TwilioSmsMessageFailureException($"Unable to issue SMS reminder to {toPhoneNumber}");
-			}
+			await MessageResource.CreateAsync
+			(
+				from: fromPhoneNumber,
+				to: toPhoneNumber,
+				body: messageBody
+			);
 
 			return true;
 		}
@@ -68,7 +64,9 @@ namespace Bugr.Application.Messages.Commands
 			var authToken = await _client.GetSecretValueAsync(_secretKeySettings.TwilioAuthToken);
 
 			if (authToken == null || accountId == null)
+			{
 				throw new RequestFailedException("Unable to retrieve Azure KeyVault Secrets");
+			}
 
 			TwilioClient.Init(accountId, authToken);
 		}

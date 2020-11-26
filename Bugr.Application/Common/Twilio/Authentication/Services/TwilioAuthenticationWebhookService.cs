@@ -1,12 +1,8 @@
-﻿using System;
-using Twilio.Security;
-using Microsoft.AspNetCore.Http;
+﻿using Twilio.Security;
 using System.Threading.Tasks;
 using Azure.Security.KeyVault.Secrets;
 using Bugr.Application.Common.Secrets.Extension;
-using Microsoft.AspNetCore.Http.Extensions;
 using Bugr.Application.Messages.Settings;
-using Bugr.Application.Common.Collections.Extensions;
 using Bugr.Application.Common.Twilio.Authentication.Exceptions;
 using Bugr.Application.Common.Twilio.Models;
 
@@ -45,13 +41,10 @@ namespace Bugr.Application.Common.Twilio.Authentication.Services
 		private bool IsValidRequest(WebhookBindingModel twilioAuthenticationBindingModel)
 		{
 			var signature = twilioAuthenticationBindingModel.Headers[_twilioHeader];
-
 			var form = twilioAuthenticationBindingModel.Form;
 
 			var requestUri = twilioAuthenticationBindingModel.DisplayUrl;
 			return _requestValidator.Validate(requestUri, form, signature);
 		}
-
-	
 	}
 }

@@ -10,11 +10,15 @@ namespace Bugr.Application.Common.Startup.Extensions
 {
 	public static class CloudTableStorageExtensions
 	{
-
+		/// <summary>
+		/// Adds the cloud table storage connection with a Singleton lifetime within IServiceCollection
+		/// </summary>
+		/// <param name="services"></param>
+		/// <returns></returns>
 		public static IServiceCollection AddCloudTableStorage(this IServiceCollection services)
 		{
 
-			static ICloudTableStorageService cloudTableStorage(IServiceProvider serviceProvider)
+			static ICloudTableStorageService CloudTableStorage(IServiceProvider serviceProvider)
 			{
 				var secretClient = serviceProvider.GetService<SecretClient>();
 
@@ -32,7 +36,7 @@ namespace Bugr.Application.Common.Startup.Extensions
 				return new CloudTableStorageService(tableClient);
 			}
 
-			services.AddSingleton(cloudTableStorage);
+			services.AddSingleton(CloudTableStorage);
 
 			return services;
 		}

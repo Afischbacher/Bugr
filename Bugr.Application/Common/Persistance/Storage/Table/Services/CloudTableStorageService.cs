@@ -8,7 +8,7 @@ namespace Bugr.Application.Common.Persistance.Storage.Table.Services
 
 	public interface ICloudTableStorageService
 	{
-		Task<IEnumerable<T>> QueryTable<T>(string tableName, TableQuery<T> tableQuery) where T : TableEntity, new();
+		Task<IEnumerable<T>> QueryTableAsync<T>(string tableName, TableQuery<T> tableQuery) where T : TableEntity, new();
 		Task InsertOrMergeAsync<T>(string tableName, T entity) where T : TableEntity, new();
 
 	}
@@ -47,7 +47,7 @@ namespace Bugr.Application.Common.Persistance.Storage.Table.Services
 
 		}
 
-		public async Task<IEnumerable<T>> QueryTable<T>(string tableName, TableQuery<T> tableQuery) where T : TableEntity, new()
+		public async Task<IEnumerable<T>> QueryTableAsync<T>(string tableName, TableQuery<T> tableQuery) where T : TableEntity, new()
 		{
 			var cloudTable = _cloudTableClient.GetTableReference(tableName);
 			var tableExists = await cloudTable.ExistsAsync();

@@ -5,15 +5,15 @@ using System.Threading.Tasks;
 
 namespace Bugr.Application.Common.Orchestration.History
 {
-	public class TerminateOrchestration : IRequest<bool>
+	public class DeleteOrchestrationHistory : IRequest<bool>
 	{
 		public IDurableOrchestrationClient DurableOrchestrationClient { get; set; }
 	}
 
-	public class TerminateOrchestrationHandler : IRequestHandler<TerminateOrchestration, bool>
+	public class DeleteOrchestrationHistoryHandler : IRequestHandler<DeleteOrchestrationHistory, bool>
 	{
 
-		public async Task<bool> Handle(TerminateOrchestration request, CancellationToken cancellationToken)
+		public async Task<bool> Handle(DeleteOrchestrationHistory request, CancellationToken cancellationToken)
 		{
 			try
 			{
@@ -25,7 +25,7 @@ namespace Bugr.Application.Common.Orchestration.History
 				foreach (var durableOrchestrationState in previousDurableOrchestrations)
 				{
 					await client.PurgeInstanceHistoryAsync(durableOrchestrationState.InstanceId);
-					await client.TerminateAsync(durableOrchestrationState.InstanceId, $"{nameof(TerminateOrchestration)} mediator command has terminated the orchestration");
+					await client.TerminateAsync(durableOrchestrationState.InstanceId, $"{nameof(DeleteOrchestrationHistory)} mediator command has terminated the orchestration");
 				}
 
 				return true;

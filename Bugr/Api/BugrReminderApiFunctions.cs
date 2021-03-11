@@ -51,8 +51,10 @@ namespace Bugr.Api
 		}
 
 		[FunctionName(BugrReminderApiFunctionNames.BugrReminderTimerTriggerFunctionOrchestrator)]
-		public async Task BugrReminderTimerTriggerFunctionOrchestrator([TimerTrigger("0 30 13 * Sep-May Thu", RunOnStartup = true)] TimerInfo myTimer, [DurableClient] IDurableOrchestrationClient client, ILogger log)
+		public async Task BugrReminderTimerTriggerFunctionOrchestrator([TimerTrigger("0 30 13 * * Thu", RunOnStartup = true)] TimerInfo myTimer, [DurableClient] IDurableOrchestrationClient client, ILogger log)
 		{
+			
+
 			await client.StartNewAsync(BugrReminderApiFunctionNames.BugrReminderOrchestrationTrigger);
 
 			log.LogInformation($"Begun {BugrReminderApiFunctionNames.BugrReminderTimerTriggerFunctionOrchestrator}");

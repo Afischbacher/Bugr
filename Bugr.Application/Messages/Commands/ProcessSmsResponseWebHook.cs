@@ -19,7 +19,7 @@ namespace Bugr.Application.Messages.Commands
 {
 	public class ProcessSmsWebhookResponse : IRequest<bool>
 	{
-		public WebhookBindingModel BindingModel { get; set; }
+		public TwilioWebhookBindingModel BindingModel { get; set; }
 	}
 
 	public class ProcessSmsResponseWebHookHandler : IRequestHandler<ProcessSmsWebhookResponse, bool>

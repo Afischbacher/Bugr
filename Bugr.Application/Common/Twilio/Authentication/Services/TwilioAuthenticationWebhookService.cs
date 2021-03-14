@@ -10,7 +10,7 @@ namespace Bugr.Application.Common.Twilio.Authentication.Services
 {
 	public interface ITwilioAuthenticationWebHookService
 	{
-		Task<bool> AuthenticateWebHookRequest(WebhookBindingModel twilioAuthenticationBindingModel);
+		Task<bool> AuthenticateWebHookRequest(TwilioWebhookBindingModel twilioAuthenticationBindingModel);
 	}
 
 	public class TwilioAuthenticationWebHookService : ITwilioAuthenticationWebHookService
@@ -26,7 +26,7 @@ namespace Bugr.Application.Common.Twilio.Authentication.Services
 			_secretKeySettings = secretKeySettings;
 		}
 
-		public async Task<bool> AuthenticateWebHookRequest(WebhookBindingModel twilioAuthenticationBindingModel)
+		public async Task<bool> AuthenticateWebHookRequest(TwilioWebhookBindingModel twilioAuthenticationBindingModel)
 		{
 			var twilioAuthToken = await _secretClient.GetSecretValueAsync(_secretKeySettings.TwilioAuthToken);
 			_requestValidator = new RequestValidator(twilioAuthToken);
@@ -38,7 +38,7 @@ namespace Bugr.Application.Common.Twilio.Authentication.Services
 			return true;
 		}
 
-		private bool IsValidRequest(WebhookBindingModel twilioAuthenticationBindingModel)
+		private bool IsValidRequest(TwilioWebhookBindingModel twilioAuthenticationBindingModel)
 		{
 			var signature = twilioAuthenticationBindingModel.Headers[_twilioHeader];
 			var form = twilioAuthenticationBindingModel.Form;

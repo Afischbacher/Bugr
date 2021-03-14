@@ -5,15 +5,14 @@ using System.Threading.Tasks;
 
 namespace Bugr.Application.Common.Orchestration.History
 {
-	public class DeleteOrchestrationHistory : IRequest<bool>
+	public class TerminateDurableFunctionOrchestration : IRequest<bool>
 	{
 		public IDurableOrchestrationClient DurableOrchestrationClient { get; set; }
 	}
 
-	public class DeleteOrchestrationHistoryHandler : IRequestHandler<DeleteOrchestrationHistory, bool>
+	public class TerminateDurableFunctionOrchestrationHandler : IRequestHandler<TerminateDurableFunctionOrchestration, bool>
 	{
-
-		public async Task<bool> Handle(DeleteOrchestrationHistory request, CancellationToken cancellationToken)
+		public async Task<bool> Handle(TerminateDurableFunctionOrchestration request, CancellationToken cancellationToken)
 		{
 			try
 			{
@@ -24,8 +23,7 @@ namespace Bugr.Application.Common.Orchestration.History
 
 				foreach (var durableOrchestrationState in previousDurableOrchestrations)
 				{
-					await client.PurgeInstanceHistoryAsync(durableOrchestrationState.InstanceId);
-					await client.TerminateAsync(durableOrchestrationState.InstanceId, $"{nameof(DeleteOrchestrationHistory)} mediator command has terminated the orchestration");
+					await client.TerminateAsync(durableOrchestrationState.InstanceId, $"{nameof(TerminateDurableFunctionOrchestration)} mediator command has terminated the orchestration");
 				}
 
 				return true;
@@ -33,7 +31,7 @@ namespace Bugr.Application.Common.Orchestration.History
 			}
 			catch 
 			{
-				// Fail silently if durable function purging fails
+				// Fail silently if durable function termination fails
 				return false;
 			}
 		}

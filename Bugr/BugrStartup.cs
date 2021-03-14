@@ -1,7 +1,7 @@
 ﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using MediatR;
 using System.Reflection;
-using Bugr.Application.Common.Mediatr;
+using Bugr.Application.Common.Mediator;
 using Microsoft.Extensions.DependencyInjection;
 using Bugr.Application.Messages.Services;
 using Azure.Security.KeyVault.Secrets;
@@ -21,7 +21,7 @@ namespace Bugr
 		{
 
 			// Service Dependency Injection Configuration
-			builder.Services.AddMediatR(Assembly.GetAssembly(typeof(IMediatrRegistration)));
+			builder.Services.AddMediatR(Assembly.GetAssembly(typeof(IMediatorRegistration)));
 			builder.Services.AddSingleton(new SecretClient(new Uri(AzureKeyVaultEndPoint), new DefaultAzureCredential()));
 			
 			// Services and Settings

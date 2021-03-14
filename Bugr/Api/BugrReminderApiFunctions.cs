@@ -14,29 +14,26 @@ using Bugr.Application.Common.Collections.Extensions;
 using System.Linq;
 using Microsoft.AspNetCore.Http.Extensions;
 using Bugr.Application.Common.Orchestration.Naming;
+using Bugr.Application.Common.Twilio.Authentication.Mediator.Commands;
 
 namespace Bugr.Api
 {
 	public class BugrReminderApiFunctions
 	{
 		private readonly IMediator _mediator;
-		private readonly ITwilioAuthenticationWebHookService _twilioAuthenticationWebHookService;
 
 		public BugrReminderApiFunctions
 		(
-			IMediator mediator,
-			ITwilioAuthenticationWebHookService twilioAuthenticationWebHookService
+			IMediator mediator
 		)
 		{
 			_mediator = mediator;
-			_twilioAuthenticationWebHookService = twilioAuthenticationWebHookService;
 		}
 
 		[FunctionName(BugrReminderApiFunctionNames.ProcessSmsResponseWebHookHttpTriggerOrchestrator)]
 		public async Task ProcessSmsResponseWebHookHttpTriggerOrchestrator([HttpTrigger(AuthorizationLevel.Anonymous, "POST", Route = "smsWebHook")] HttpRequest httpRequest, [DurableClient] IDurableOrchestrationClient client, ILogger log)
 		{
-
-			var bindingModel = new WebhookBindingModel
+			var bindingModel = new TwilioWebhookBindingModel
 			{
 				Body = await httpRequest.ReadAsStringAsync(),
 				DisplayUrl = UriHelper.GetDisplayUrl(httpRequest),
@@ -53,8 +50,6 @@ namespace Bugr.Api
 		[FunctionName(BugrReminderApiFunctionNames.BugrReminderTimerTriggerFunctionOrchestrator)]
 		public async Task BugrReminderTimerTriggerFunctionOrchestrator([TimerTrigger("0 30 13 * * Thu", RunOnStartup = true)] TimerInfo myTimer, [DurableClient] IDurableOrchestrationClient client, ILogger log)
 		{
-			
-
 			await client.StartNewAsync(BugrReminderApiFunctionNames.BugrReminderOrchestrationTrigger);
 
 			log.LogInformation($"Begun {BugrReminderApiFunctionNames.BugrReminderTimerTriggerFunctionOrchestrator}");
@@ -64,7 +59,7 @@ namespace Bugr.Api
 		[FunctionName(BugrReminderApiFunctionNames.ProcessSmsResponseWebHookOrchestrationTrigger)]
 		public async Task<bool> ProcessSmsResponseWebHookHttpTriggerOrchestration([OrchestrationTrigger] IDurableOrchestrationContext context, ILogger log)
 		{
-			var webHookBindingModel = context.GetInput<WebhookBindingModel>();
+			var webHookBindingModel = context.GetInput<TwilioWebhookBindingModel>();
 
 			await context.CallActivityAsync(BugrReminderApiFunctionNames.AuthenticateWebHookRequestActivityFunction, webHookBindingModel);
 
@@ -94,8 +89,12 @@ namespace Bugr.Api
 		[FunctionName(BugrReminderApiFunctionNames.AuthenticateWebHookRequestActivityFunction)]
 		public async Task AuthenticateWebHookRequestActivityFunction([ActivityTrigger] IDurableActivityContext context)
 		{
-			var bindingModel = context.GetInput<WebhookBindingModel>();
-			await _twilioAuthenticationWebHookService.AuthenticateWebHookRequest(bindingModel);
+			var webhookBindingModel = context.GetInput<TwilioWebhookBindingModel>();
+
+			await _mediator.Send(new AuthenticateTwilioWebhookRequest
+			{
+				WebhookBindingModel = webhookBindingModel
+			});
 		}
 
 		[FunctionName(BugrReminderApiFunctionNames.SendBugrMessageActivityFunction)]
@@ -114,7 +113,7 @@ namespace Bugr.Api
 		[FunctionName(BugrReminderApiFunctionNames.ProcessSmsWebhookResponseActivityFunction)]
 		public async Task ProcessSmsWebhookResponseActivityFunction([ActivityTrigger] IDurableActivityContext context)
 		{
-			var bindingModel = context.GetInput<WebhookBindingModel>();
+			var bindingModel = context.GetInput<TwilioWebhookBindingModel>();
 
 			await _mediator.Send(new ProcessSmsWebhookResponse
 			{
